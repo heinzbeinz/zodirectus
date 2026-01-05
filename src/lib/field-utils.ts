@@ -22,6 +22,30 @@ export class FieldUtils {
   }
 
   /**
+   * Check if a field is a notice field
+   */
+  static isNoticeField(field: DirectusField): boolean {
+    // Check if field name starts with 'notice-'
+    if (field.field.startsWith('notice-')) {
+      return true;
+    }
+    
+    // Check if field interface is 'notice'
+    if (field.meta?.interface === 'notice') {
+      return true;
+    }
+    
+    return false;
+  }
+
+  /**
+   * Check if a field is a UI only field which can be skipped
+   */
+  static isUiOnlyField(field: DirectusField): boolean) {
+    return isDividerField(field) || isNoticeField(field);
+  }
+
+  /**
    * Check if a field is a file field
    */
   static isFileField(field: DirectusField): boolean {

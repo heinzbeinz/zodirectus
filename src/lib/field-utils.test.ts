@@ -44,6 +44,14 @@ describe('FieldUtils', () => {
     });
   });
 
+  describe('isNoticeField', () => {
+    it('should identify notice fields correctly', () => {
+      expect(FieldUtils.isNoticeField(mockField('notice', 'alias', [], 'notice'))).toBe(true);
+      expect(FieldUtils.isNoticeField(mockField('separator', 'alias', [], 'notice'))).toBe(true);
+      expect(FieldUtils.isNoticeField(mockField('name', 'varchar'))).toBe(false);
+    });
+  });
+  
   describe('isRelationField', () => {
     it('should identify relation fields correctly', () => {
       expect(FieldUtils.isRelationField(mockField('user_id', 'uuid', ['m2o']))).toBe(true);

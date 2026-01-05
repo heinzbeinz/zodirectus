@@ -42,7 +42,7 @@ export class FieldUtils {
    * Check if a field is a UI only field which can be skipped
    */
   static isUiOnlyField(field: DirectusField): boolean {
-    return isDividerField(field) || isNoticeField(field);
+    return FieldUtils.isDividerField(field) || FieldUtils.isNoticeField(field);
   }
 
   /**

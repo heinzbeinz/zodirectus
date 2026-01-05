@@ -40,7 +40,7 @@ export class ZodGenerator {
     const schemaName = `Drx${singularName}Schema`;
     
     const filteredFields = collection.fields
-      .filter(field => !this.isDividerField(field)); // Include all fields except dividers
+      .filter(field => !this.isUiOnlyField(field)); // Include all fields except UI fields
     
     // Check if ID field exists, if not add it
     const hasIdField = filteredFields.some(field => field.field === 'id');

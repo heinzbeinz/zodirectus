@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { z } from 'zod'; // Used in generated code strings
 import { DirectusCollectionWithFields, DirectusField, ZodirectusConfig, GeneratedSchema } from '../types';
-import { StringUtils } from '../lib';
+import { FieldUtils, StringUtils } from '../lib';
 
 /**
  * Zod Schema Generator for Directus collections
@@ -40,7 +40,7 @@ export class ZodGenerator {
     const schemaName = `Drx${singularName}Schema`;
     
     const filteredFields = collection.fields
-      .filter(field => !this.isUiOnlyField(field)); // Include all fields except UI fields
+      .filter(field => !FieldUtils.isUiOnlyField(field)); // Include all fields except UI fields
     
     // Check if ID field exists, if not add it
     const hasIdField = filteredFields.some(field => field.field === 'id');
@@ -451,28 +451,6 @@ ${omitFieldsString}
       default:
         return 'z.string()';
     }
-  }
-
-  /**
-   * Check if a field is a divider field that should be excluded
-   */
-  private isDividerField(field: DirectusField): boolean {
-    // Check if field name starts with 'divider-'
-    if (field.field.startsWith('divider-')) {
-      return true;
-    }
-    
-    // Check if field interface is 'divider'
-    if (field.meta?.interface === 'divider') {
-      return true;
-    }
-    
-    // Check if field type is 'divider'
-    if (field.type === 'divider') {
-      return true;
-    }
-    
-    return false;
   }
 
   /**

@@ -1,3 +1,4 @@
+import { FieldUtils } from '../lib';
 import { DirectusCollectionWithFields, DirectusField, ZodirectusConfig, GeneratedSchema } from '../types';
 
 /**
@@ -37,7 +38,7 @@ export class TypeGenerator {
     const typeName = `Drs${singularName}`;
     
     const filteredFields = collection.fields
-      .filter(field => !this.isUiOnlyField(field)); // Include all fields except UI fields
+      .filter(field => !FieldUtils.isUiOnlyField(field)); // Include all fields except UI fields
     
     // Check if ID field exists, if not add it
     const hasIdField = filteredFields.some(field => field.field === 'id');
@@ -410,28 +411,6 @@ export class TypeGenerator {
       default:
         return 'string';
     }
-  }
-
-  /**
-   * Check if a field is a divider field that should be excluded
-   */
-  private isDividerField(field: DirectusField): boolean {
-    // Check if field name starts with 'divider-'
-    if (field.field.startsWith('divider-')) {
-      return true;
-    }
-    
-    // Check if field interface is 'divider'
-    if (field.meta?.interface === 'divider') {
-      return true;
-    }
-    
-    // Check if field type is 'divider'
-    if (field.type === 'divider') {
-      return true;
-    }
-    
-    return false;
   }
 
   /**

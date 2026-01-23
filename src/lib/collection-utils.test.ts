@@ -154,7 +154,10 @@ describe('CollectionUtils', () => {
         createMockField('date_updated'),
       ];
 
-      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(fields, true);
+      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(
+        fields,
+        true
+      );
 
       expect(fieldsToOmit).toContain('id');
       expect(fieldsToOmit).toContain('user_created');
@@ -171,7 +174,10 @@ describe('CollectionUtils', () => {
         createMockField('date_created'),
       ];
 
-      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(fields, false);
+      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(
+        fields,
+        false
+      );
 
       expect(fieldsToOmit).not.toContain('id');
       expect(fieldsToOmit).toContain('user_created');
@@ -186,7 +192,10 @@ describe('CollectionUtils', () => {
         createMockField('description'),
       ];
 
-      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(fields, true);
+      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(
+        fields,
+        true
+      );
 
       expect(fieldsToOmit).toContain('id');
       expect(fieldsToOmit).not.toContain('user_created');
@@ -197,7 +206,10 @@ describe('CollectionUtils', () => {
 
     it('should handle empty fields array', () => {
       const fields: any[] = [];
-      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(fields, true);
+      const fieldsToOmit = CollectionUtils.getFieldsToOmitForCreate(
+        fields,
+        true
+      );
       expect(fieldsToOmit).toEqual(['id']);
     });
   });

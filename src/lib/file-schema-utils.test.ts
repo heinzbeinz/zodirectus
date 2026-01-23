@@ -1,7 +1,13 @@
 import { FileSchemaUtils } from './file-schema-utils';
 
 describe('FileSchemaUtils', () => {
-  const createMockFileField = (field: string, dataType: string, isNullable: boolean = false, isPrimaryKey: boolean = false, required: boolean = true) => ({
+  const createMockFileField = (
+    field: string,
+    dataType: string,
+    isNullable: boolean = false,
+    isPrimaryKey: boolean = false,
+    required: boolean = true
+  ) => ({
     field,
     type: dataType,
     schema: {
@@ -13,14 +19,14 @@ describe('FileSchemaUtils', () => {
       is_primary_key: isPrimaryKey,
       has_auto_increment: false,
     },
-      meta: {
-        id: 1,
-        collection: 'directus_files',
-        field,
-        required,
-        readonly: false,
-        hidden: false,
-      },
+    meta: {
+      id: 1,
+      collection: 'directus_files',
+      field,
+      required,
+      readonly: false,
+      hidden: false,
+    },
   });
 
   describe('generateFileSchemaFields', () => {
@@ -28,7 +34,13 @@ describe('FileSchemaUtils', () => {
       const fileFields = [
         createMockFileField('id', 'uuid', false, true),
         createMockFileField('filename_disk', 'varchar', false, false, false),
-        createMockFileField('filename_download', 'varchar', false, false, false),
+        createMockFileField(
+          'filename_download',
+          'varchar',
+          false,
+          false,
+          false
+        ),
         createMockFileField('title', 'varchar', true, false, false),
         createMockFileField('type', 'varchar', false, false, false),
         createMockFileField('filesize', 'int', false, false, false),
@@ -154,8 +166,10 @@ describe('FileSchemaUtils', () => {
         createMockFileField('height', 'int', true),
       ];
 
-      const regularResult = FileSchemaUtils.generateFileInterfaceFields(fileFields);
-      const imageResult = FileSchemaUtils.generateImageFileInterfaceFields(fileFields);
+      const regularResult =
+        FileSchemaUtils.generateFileInterfaceFields(fileFields);
+      const imageResult =
+        FileSchemaUtils.generateImageFileInterfaceFields(fileFields);
 
       expect(imageResult).toBe(regularResult);
     });

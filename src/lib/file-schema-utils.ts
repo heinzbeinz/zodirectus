@@ -7,15 +7,16 @@ export class FileSchemaUtils {
    */
   static generateFileSchemaFields(fileFields: any[]): string {
     const fields: string[] = [];
-    
+
     for (const field of fileFields) {
       const fieldName = field.field;
       const dataType = field.schema?.data_type || field.type;
       const isNullable = field.schema?.is_nullable;
-      const isOptional = !field.schema?.is_nullable && !field.schema?.is_primary_key;
-      
+      const isOptional =
+        !field.schema?.is_nullable && !field.schema?.is_primary_key;
+
       let zodType = '';
-      
+
       switch (dataType) {
         case 'uuid':
           zodType = 'z.string().uuid()';
@@ -63,7 +64,7 @@ export class FileSchemaUtils {
         default:
           zodType = 'z.any()';
       }
-      
+
       // Apply nullable and optional modifiers
       if (isNullable) {
         zodType += '.nullable()';
@@ -71,10 +72,10 @@ export class FileSchemaUtils {
       if (isOptional) {
         zodType += '.optional()';
       }
-      
+
       fields.push(`    ${fieldName}: ${zodType}`);
     }
-    
+
     return fields.join(',\n');
   }
 
@@ -83,14 +84,15 @@ export class FileSchemaUtils {
    */
   static generateFileInterfaceFields(fileFields: any[]): string {
     const fields: string[] = [];
-    
+
     for (const field of fileFields) {
       const fieldName = field.field;
       const dataType = field.schema?.data_type || field.type;
-      const isOptional = !field.schema?.is_nullable && !field.schema?.is_primary_key;
-      
+      const isOptional =
+        !field.schema?.is_nullable && !field.schema?.is_primary_key;
+
       let tsType = '';
-      
+
       switch (dataType) {
         case 'uuid':
         case 'varchar':
@@ -126,11 +128,13 @@ export class FileSchemaUtils {
         default:
           tsType = 'any';
       }
-      
-      const fieldDef = isOptional ? `${fieldName}?: ${tsType}` : `${fieldName}: ${tsType}`;
+
+      const fieldDef = isOptional
+        ? `${fieldName}?: ${tsType}`
+        : `${fieldName}: ${tsType}`;
       fields.push(`  ${fieldDef}`);
     }
-    
+
     return fields.join(';\n');
   }
 

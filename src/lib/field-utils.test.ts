@@ -2,7 +2,13 @@ import { FieldUtils } from './field-utils';
 import { DirectusField } from '../types';
 
 describe('FieldUtils', () => {
-  const mockField = (field: string, type: string, special?: string[], interfaceName?: string, options?: any): DirectusField => ({
+  const mockField = (
+    field: string,
+    type: string,
+    special?: string[],
+    interfaceName?: string,
+    options?: any
+  ): DirectusField => ({
     field,
     type,
     schema: {
@@ -29,43 +35,81 @@ describe('FieldUtils', () => {
 
   describe('isFileField', () => {
     it('should identify file fields correctly', () => {
-      expect(FieldUtils.isFileField(mockField('avatar', 'uuid', ['file']))).toBe(true);
-      expect(FieldUtils.isFileField(mockField('image', 'uuid', [], 'file-image'))).toBe(true);
-      expect(FieldUtils.isFileField(mockField('gallery', 'json', ['files']))).toBe(true);
+      expect(
+        FieldUtils.isFileField(mockField('avatar', 'uuid', ['file']))
+      ).toBe(true);
+      expect(
+        FieldUtils.isFileField(mockField('image', 'uuid', [], 'file-image'))
+      ).toBe(true);
+      expect(
+        FieldUtils.isFileField(mockField('gallery', 'json', ['files']))
+      ).toBe(true);
       expect(FieldUtils.isFileField(mockField('name', 'varchar'))).toBe(false);
     });
   });
 
   describe('isDividerField', () => {
     it('should identify divider fields correctly', () => {
-      expect(FieldUtils.isDividerField(mockField('divider', 'alias', [], 'divider'))).toBe(true);
-      expect(FieldUtils.isDividerField(mockField('separator', 'alias', [], 'divider'))).toBe(true);
-      expect(FieldUtils.isDividerField(mockField('name', 'varchar'))).toBe(false);
+      expect(
+        FieldUtils.isDividerField(mockField('divider', 'alias', [], 'divider'))
+      ).toBe(true);
+      expect(
+        FieldUtils.isDividerField(
+          mockField('separator', 'alias', [], 'divider')
+        )
+      ).toBe(true);
+      expect(FieldUtils.isDividerField(mockField('name', 'varchar'))).toBe(
+        false
+      );
     });
   });
 
   describe('isNoticeField', () => {
     it('should identify notice fields correctly', () => {
-      expect(FieldUtils.isNoticeField(mockField('notice', 'alias', [], 'notice'))).toBe(true);
-      expect(FieldUtils.isNoticeField(mockField('separator', 'alias', [], 'notice'))).toBe(true);
-      expect(FieldUtils.isNoticeField(mockField('name', 'varchar'))).toBe(false);
+      expect(
+        FieldUtils.isNoticeField(mockField('notice', 'alias', [], 'notice'))
+      ).toBe(true);
+      expect(
+        FieldUtils.isNoticeField(mockField('separator', 'alias', [], 'notice'))
+      ).toBe(true);
+      expect(FieldUtils.isNoticeField(mockField('name', 'varchar'))).toBe(
+        false
+      );
     });
   });
-  
+
   describe('isRelationField', () => {
     it('should identify relation fields correctly', () => {
-      expect(FieldUtils.isRelationField(mockField('user_id', 'uuid', ['m2o']))).toBe(true);
-      expect(FieldUtils.isRelationField(mockField('roles', 'json', ['m2m']))).toBe(true);
-      expect(FieldUtils.isRelationField(mockField('posts', 'json', ['o2m']))).toBe(true);
-      expect(FieldUtils.isRelationField(mockField('name', 'varchar'))).toBe(false);
+      expect(
+        FieldUtils.isRelationField(mockField('user_id', 'uuid', ['m2o']))
+      ).toBe(true);
+      expect(
+        FieldUtils.isRelationField(mockField('roles', 'json', ['m2m']))
+      ).toBe(true);
+      expect(
+        FieldUtils.isRelationField(mockField('posts', 'json', ['o2m']))
+      ).toBe(true);
+      expect(FieldUtils.isRelationField(mockField('name', 'varchar'))).toBe(
+        false
+      );
     });
   });
 
   describe('isManyToManyJunctionField', () => {
     it('should identify M2M junction fields correctly', () => {
-      expect(FieldUtils.isManyToManyJunctionField(mockField('user_id', 'uuid', ['m2m']))).toBe(true);
-      expect(FieldUtils.isManyToManyJunctionField(mockField('role_id', 'uuid', ['m2m']))).toBe(true);
-      expect(FieldUtils.isManyToManyJunctionField(mockField('name', 'varchar'))).toBe(false);
+      expect(
+        FieldUtils.isManyToManyJunctionField(
+          mockField('user_id', 'uuid', ['m2m'])
+        )
+      ).toBe(true);
+      expect(
+        FieldUtils.isManyToManyJunctionField(
+          mockField('role_id', 'uuid', ['m2m'])
+        )
+      ).toBe(true);
+      expect(
+        FieldUtils.isManyToManyJunctionField(mockField('name', 'varchar'))
+      ).toBe(false);
     });
   });
 
@@ -142,7 +186,7 @@ describe('FieldUtils', () => {
         ],
       };
       expect(FieldUtils.isJunctionTable(junctionCollection)).toBe(true);
-      
+
       const regularCollection = {
         collection: 'users',
         fields: [
@@ -162,9 +206,9 @@ describe('FieldUtils', () => {
         mockField('user_created', 'uuid', ['user-created'], 'input'),
         mockField('date_created', 'datetime', ['date-created'], 'datetime'),
       ];
-      
+
       const fieldsToOmit = FieldUtils.getFieldsToOmitForCreate(fields, true);
-      
+
       expect(fieldsToOmit).toContain('id');
       expect(fieldsToOmit).toContain('user_created');
       expect(fieldsToOmit).toContain('date_created');
@@ -176,9 +220,9 @@ describe('FieldUtils', () => {
         mockField('id', 'uuid', [], 'input'),
         mockField('name', 'varchar', [], 'input'),
       ];
-      
+
       const fieldsToOmit = FieldUtils.getFieldsToOmitForCreate(fields, true);
-      
+
       expect(fieldsToOmit).toContain('id');
       expect(fieldsToOmit).not.toContain('name');
     });
@@ -188,9 +232,9 @@ describe('FieldUtils', () => {
         mockField('name', 'varchar', [], 'input'),
         mockField('user_created', 'uuid', ['user-created'], 'input'),
       ];
-      
+
       const fieldsToOmit = FieldUtils.getFieldsToOmitForCreate(fields, false);
-      
+
       expect(fieldsToOmit).toContain('user_created');
       expect(fieldsToOmit).not.toContain('name');
     });

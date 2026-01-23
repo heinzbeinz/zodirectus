@@ -278,10 +278,13 @@ describe('ZodGenerator', () => {
       const result = generator.generateSchema(collection);
 
       expect(result).toContain('export const DrxUserSchema = z.object({');
-      expect(result).toContain('export const DrxUserCreateSchema = DrxUserSchema.omit({');
-      expect(result).toContain('export const DrxUserUpdateSchema = DrxUserSchema.partial().required({');
+      expect(result).toContain(
+        'export const DrxUserCreateSchema = DrxUserSchema.omit({'
+      );
+      expect(result).toContain(
+        'export const DrxUserUpdateSchema = DrxUserSchema.partial().required({'
+      );
       expect(result).toContain('export const DrxUserGetSchema = DrxUserSchema');
     });
   });
-
 });

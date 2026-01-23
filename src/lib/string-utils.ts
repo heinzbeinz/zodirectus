@@ -16,15 +16,17 @@ export class StringUtils {
    * Convert string to kebab-case
    */
   static toKebabCase(str: string): string {
-    return str
-      // Handle camelCase: add hyphen before uppercase letters following lowercase
-      .replace(/([a-z])([A-Z])/g, '$1-$2')
-      // Handle PascalCase: add hyphen before uppercase letters following other uppercase letters
-      .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
-      // Replace underscores and spaces with hyphens
-      .replace(/[\s_]+/g, '-')
-      // Convert to lowercase
-      .toLowerCase();
+    return (
+      str
+        // Handle camelCase: add hyphen before uppercase letters following lowercase
+        .replace(/([a-z])([A-Z])/g, '$1-$2')
+        // Handle PascalCase: add hyphen before uppercase letters following other uppercase letters
+        .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+        // Replace underscores and spaces with hyphens
+        .replace(/[\s_]+/g, '-')
+        // Convert to lowercase
+        .toLowerCase()
+    );
   }
 
   /**
@@ -37,31 +39,31 @@ export class StringUtils {
     }
 
     const lowerWord = word.toLowerCase();
-    
+
     // Irregular plurals that need special handling
     const irregularPlurals: Record<string, string> = {
-      'children': 'child',
-      'people': 'person',
-      'men': 'man',
-      'women': 'woman',
-      'feet': 'foot',
-      'teeth': 'tooth',
-      'mice': 'mouse',
-      'geese': 'goose',
-      'oxen': 'ox',
-      'data': 'datum',
-      'media': 'medium',
-      'criteria': 'criterion',
-      'phenomena': 'phenomenon',
-      'indices': 'index',
-      'vertices': 'vertex',
-      'matrices': 'matrix',
-      'analyses': 'analysis',
-      'bases': 'base',
-      'diagnoses': 'diagnosis',
-      'theses': 'thesis',
-      'crises': 'crisis',
-      'oases': 'oasis'
+      children: 'child',
+      people: 'person',
+      men: 'man',
+      women: 'woman',
+      feet: 'foot',
+      teeth: 'tooth',
+      mice: 'mouse',
+      geese: 'goose',
+      oxen: 'ox',
+      data: 'datum',
+      media: 'medium',
+      criteria: 'criterion',
+      phenomena: 'phenomenon',
+      indices: 'index',
+      vertices: 'vertex',
+      matrices: 'matrix',
+      analyses: 'analysis',
+      bases: 'base',
+      diagnoses: 'diagnosis',
+      theses: 'thesis',
+      crises: 'crisis',
+      oases: 'oasis',
     };
 
     // Check for irregular plurals first
@@ -95,7 +97,7 @@ export class StringUtils {
       const parts = word.split(/(?=[A-Z])/);
       if (parts.length >= 2) {
         const lastPart = parts[parts.length - 1];
-        
+
         // For compound words ending in 's', preserve the compound structure
         if (word.endsWith('s') && !word.endsWith('ies')) {
           if (lastPart.endsWith('s') && lastPart.length > 1) {
@@ -125,25 +127,46 @@ export class StringUtils {
     if (lowerWord.endsWith('ves') && lowerWord.length > 4) {
       // Check if it should be 'f' or 'fe'
       const withoutVes = lowerWord.slice(0, -3);
-      if (['leaf', 'wolf', 'shelf', 'calf', 'half', 'self', 'knife', 'life', 'wife'].includes(withoutVes + 'f')) {
+      if (
+        [
+          'leaf',
+          'wolf',
+          'shelf',
+          'calf',
+          'half',
+          'self',
+          'knife',
+          'life',
+          'wife',
+        ].includes(withoutVes + 'f')
+      ) {
         return this.capitalizeFirst(withoutVes + 'f', word);
       }
-      if (['leaf', 'wolf', 'shelf', 'calf', 'half', 'self'].includes(withoutVes)) {
+      if (
+        ['leaf', 'wolf', 'shelf', 'calf', 'half', 'self'].includes(withoutVes)
+      ) {
         return this.capitalizeFirst(withoutVes, word);
       }
     }
 
     // Words ending in -es (but not -ies, -ves already handled)
-    if (lowerWord.endsWith('es') && !lowerWord.endsWith('ies') && !lowerWord.endsWith('ves') && lowerWord.length > 3) {
+    if (
+      lowerWord.endsWith('es') &&
+      !lowerWord.endsWith('ies') &&
+      !lowerWord.endsWith('ves') &&
+      lowerWord.length > 3
+    ) {
       // Check if it's a valid -es plural (e.g., boxes -> box, classes -> class)
       const withoutEs = lowerWord.slice(0, -2);
       const lastChar = withoutEs.slice(-1);
-      
+
       // Words ending in -s, -sh, -ch, -x, -z typically add -es
-      if (['s', 'sh', 'ch', 'x', 'z'].includes(lastChar) || 
-          withoutEs.endsWith('ss') || 
-          withoutEs.endsWith('ch') ||
-          withoutEs.endsWith('sh')) {
+      if (
+        ['s', 'sh', 'ch', 'x', 'z'].includes(lastChar) ||
+        withoutEs.endsWith('ss') ||
+        withoutEs.endsWith('ch') ||
+        withoutEs.endsWith('sh')
+      ) {
         return this.capitalizeFirst(withoutEs, word);
       }
     }
@@ -152,15 +175,23 @@ export class StringUtils {
     if (lowerWord.endsWith('s') && lowerWord.length > 2) {
       // Don't remove 's' if it's part of the root word
       const withoutS = lowerWord.slice(0, -1);
-      
+
       // Avoid removing 's' from words that end with 's' in singular form
       // (e.g., "glass", "class", "mass", "pass", "grass", "gas", "bus", "access")
-      const singularEndsWithS = ['glas', 'clas', 'mas', 'pas', 'gras', 'ga', 'bu', 'acces'];
+      const singularEndsWithS = [
+        'glas',
+        'clas',
+        'mas',
+        'pas',
+        'gras',
+        'ga',
+        'bu',
+        'acces',
+      ];
       if (singularEndsWithS.some(ending => withoutS.endsWith(ending))) {
         return word; // Keep as is
       }
-      
-      
+
       return this.capitalizeFirst(withoutS, word);
     }
 
@@ -175,14 +206,14 @@ export class StringUtils {
     if (original === original.toUpperCase()) {
       return singular.toUpperCase();
     }
-    
+
     // For compound words like "DirectusRevision", preserve the original capitalization pattern
     if (original[0] === original[0].toUpperCase()) {
       // Try to reconstruct the compound word capitalization
       // Look for common patterns in the original word
       const originalLower = original.toLowerCase();
       const singularLower = singular.toLowerCase();
-      
+
       // If the singular word contains the original word structure, try to preserve it
       if (singularLower.includes('directus')) {
         // For Directus compound words, capitalize each part
@@ -190,7 +221,7 @@ export class StringUtils {
           .replace('directus', 'Directus')
           .replace(/([a-z])([A-Z])/g, '$1$2'); // Preserve existing capitals
       }
-      
+
       // Default: just capitalize the first letter
       return singular.charAt(0).toUpperCase() + singular.slice(1);
     }

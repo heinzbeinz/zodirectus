@@ -92,6 +92,7 @@ export interface DirectusCollectionWithFields extends DirectusCollection {
 export interface ZodirectusConfig {
   directusUrl: string;
   token?: string;
+  additionalHeaders?: Record<string, string>;
   email?: string;
   password?: string;
   collections?: string[];

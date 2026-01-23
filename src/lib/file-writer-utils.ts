@@ -12,7 +12,10 @@ export class FileWriterUtils {
   /**
    * Write generated files to the output directory
    */
-  static async writeFiles(results: GeneratedSchema[], outputDir: string): Promise<void> {
+  static async writeFiles(
+    results: GeneratedSchema[],
+    outputDir: string
+  ): Promise<void> {
     // Ensure output directory exists
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
@@ -26,20 +29,32 @@ export class FileWriterUtils {
 
     // Build dependency graph and detect circular dependencies
     const dependencyGraph = DependencyUtils.buildDependencyGraph(results);
-    const circularDeps = DependencyUtils.detectCircularDependencies(dependencyGraph);
+    const circularDeps =
+      DependencyUtils.detectCircularDependencies(dependencyGraph);
 
     // Separate system and regular collections
-    const systemCollections = results.filter(r => r.collectionName.startsWith('directus_'));
-    const regularCollections = results.filter(r => !r.collectionName.startsWith('directus_'));
+    const systemCollections = results.filter(r =>
+      r.collectionName.startsWith('directus_')
+    );
+    const regularCollections = results.filter(
+      r => !r.collectionName.startsWith('directus_')
+    );
 
     // Write system collections to system/ subfolder
     for (const result of systemCollections) {
-      console.log(`Writing system file for collection: ${result.collectionName}`);
+      console.log(
+        `Writing system file for collection: ${result.collectionName}`
+      );
       const fileName = StringUtils.toKebabCase(result.collectionName);
       const filePath = path.join(systemDir, `${fileName}.ts`);
-      
-      const fileContent = this.generateFileContent(result, results, circularDeps, true);
-      
+
+      const fileContent = this.generateFileContent(
+        result,
+        results,
+        circularDeps,
+        true
+      );
+
       // Write the file
       fs.writeFileSync(filePath, fileContent);
     }
@@ -49,9 +64,14 @@ export class FileWriterUtils {
       console.log(`Writing file for collection: ${result.collectionName}`);
       const fileName = StringUtils.toKebabCase(result.collectionName);
       const filePath = path.join(outputDir, `${fileName}.ts`);
-      
-      const fileContent = this.generateFileContent(result, results, circularDeps, false);
-      
+
+      const fileContent = this.generateFileContent(
+        result,
+        results,
+        circularDeps,
+        false
+      );
+
       // Write the file
       fs.writeFileSync(filePath, fileContent);
     }
@@ -67,31 +87,39 @@ export class FileWriterUtils {
     isSystemCollection: boolean = false
   ): string {
     let fileContent = '';
-    
+
     // Add zod import if needed
     fileContent += ImportUtils.generateZodImport(result);
-    
+
     // Add file schemas import if needed
-    fileContent += ImportUtils.generateFileSchemaImport(result, isSystemCollection);
-    
+    fileContent += ImportUtils.generateFileSchemaImport(
+      result,
+      isSystemCollection
+    );
+
     // Add imports for related collections
-    fileContent += ImportUtils.generateImportStatements(result, results, circularDeps, isSystemCollection);
-    
+    fileContent += ImportUtils.generateImportStatements(
+      result,
+      results,
+      circularDeps,
+      isSystemCollection
+    );
+
     // Add spacing after imports
     if (fileContent.includes('import')) {
       fileContent += '\n';
     }
-    
+
     // Add schema
     if (result.schema) {
       fileContent += result.schema + '\n\n';
     }
-    
+
     // Add type
     if (result.type) {
       fileContent += result.type + '\n';
     }
-    
+
     return fileContent;
   }
 
@@ -100,21 +128,24 @@ export class FileWriterUtils {
    */
   static async writeFileSchemas(outputDir: string, client: any): Promise<void> {
     const fileSchemasPath = path.join(outputDir, 'file-schemas.ts');
-    
+
     try {
       // Try to fetch the actual file collection structure from Directus
-      const fileCollection = await client.getCollectionWithFields('directus_files');
+      const fileCollection =
+        await client.getCollectionWithFields('directus_files');
       const fileFields = fileCollection.fields;
-      
+
       const fileSchemasContent = this.generateDynamicFileSchemas(fileFields);
-      
+
       fs.writeFileSync(fileSchemasPath, fileSchemasContent);
       console.log(`Generated: ${fileSchemasPath}`);
     } catch (error) {
-      console.log('Could not fetch file collection structure, using fallback schema');
+      console.log(
+        'Could not fetch file collection structure, using fallback schema'
+      );
       // Fallback to static schema if we can't access the file collection
       const fallbackContent = this.generateFallbackFileSchemas();
-      
+
       fs.writeFileSync(fileSchemasPath, fallbackContent);
       console.log(`Generated: ${fileSchemasPath} (fallback)`);
     }
@@ -125,10 +156,12 @@ export class FileWriterUtils {
    */
   static generateDynamicFileSchemas(fileFields: any[]): string {
     const { FileSchemaUtils } = require('./file-schema-utils');
-    
-    const fileSchemaFields = FileSchemaUtils.generateFileSchemaFields(fileFields);
-    const imageFileSchemaFields = FileSchemaUtils.generateFileSchemaFields(fileFields);
-    
+
+    const fileSchemaFields =
+      FileSchemaUtils.generateFileSchemaFields(fileFields);
+    const imageFileSchemaFields =
+      FileSchemaUtils.generateFileSchemaFields(fileFields);
+
     return `import { z } from 'zod';
 
 /**

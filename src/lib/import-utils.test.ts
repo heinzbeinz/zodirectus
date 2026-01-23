@@ -2,7 +2,11 @@ import { ImportUtils } from './import-utils';
 import { GeneratedSchema } from '../types';
 
 describe('ImportUtils', () => {
-  const createMockSchema = (collectionName: string, schema?: string, type?: string): GeneratedSchema => ({
+  const createMockSchema = (
+    collectionName: string,
+    schema?: string,
+    type?: string
+  ): GeneratedSchema => ({
     collectionName,
     schema,
     type,
@@ -72,10 +76,22 @@ describe('ImportUtils', () => {
 
   describe('generateImportStatements', () => {
     const mockResults: GeneratedSchema[] = [
-      createMockSchema('users', 'export const DrxUserSchema = z.object({ name: z.string() });'),
-      createMockSchema('posts', 'export const DrxPostSchema = z.object({ author: DrxUserSchema.nullable().optional() });'),
-      createMockSchema('directus_users', 'export const DrxDirectusUserSchema = z.object({ email: z.string() });'),
-      createMockSchema('directus_roles', 'export const DrxDirectusRoleSchema = z.object({ name: z.string() });'),
+      createMockSchema(
+        'users',
+        'export const DrxUserSchema = z.object({ name: z.string() });'
+      ),
+      createMockSchema(
+        'posts',
+        'export const DrxPostSchema = z.object({ author: DrxUserSchema.nullable().optional() });'
+      ),
+      createMockSchema(
+        'directus_users',
+        'export const DrxDirectusUserSchema = z.object({ email: z.string() });'
+      ),
+      createMockSchema(
+        'directus_roles',
+        'export const DrxDirectusRoleSchema = z.object({ name: z.string() });'
+      ),
     ];
 
     it('should generate import statements for regular collections', () => {
@@ -84,9 +100,16 @@ describe('ImportUtils', () => {
         'export const DrxCommentSchema = z.object({ post: DrxPostSchema.nullable().optional() });'
       );
 
-      const importStatements = ImportUtils.generateImportStatements(result, mockResults, [], false);
+      const importStatements = ImportUtils.generateImportStatements(
+        result,
+        mockResults,
+        [],
+        false
+      );
 
-      expect(importStatements).toContain("import { DrxPostSchema, type DrsPost } from './posts'");
+      expect(importStatements).toContain(
+        "import { DrxPostSchema, type DrsPost } from './posts'"
+      );
     });
 
     it('should generate import statements for system collections', () => {
@@ -95,9 +118,16 @@ describe('ImportUtils', () => {
         'export const DrxDirectusPolicySchema = z.object({ role: DrxDirectusRoleSchema.nullable().optional() });'
       );
 
-      const importStatements = ImportUtils.generateImportStatements(result, mockResults, [], true);
+      const importStatements = ImportUtils.generateImportStatements(
+        result,
+        mockResults,
+        [],
+        true
+      );
 
-      expect(importStatements).toContain("import { DrxDirectusRoleSchema, type DrsDirectusRole } from './directus-roles'");
+      expect(importStatements).toContain(
+        "import { DrxDirectusRoleSchema, type DrsDirectusRole } from './directus-roles'"
+      );
     });
 
     it('should generate cross-folder import statements', () => {
@@ -106,9 +136,16 @@ describe('ImportUtils', () => {
         'export const DrxPostSchema = z.object({ author: DrxDirectusUserSchema.nullable().optional() });'
       );
 
-      const importStatements = ImportUtils.generateImportStatements(result, mockResults, [], false);
+      const importStatements = ImportUtils.generateImportStatements(
+        result,
+        mockResults,
+        [],
+        false
+      );
 
-      expect(importStatements).toContain("import { DrxDirectusUserSchema, type DrsDirectusUser } from './system/directus-users'");
+      expect(importStatements).toContain(
+        "import { DrxDirectusUserSchema, type DrsDirectusUser } from './system/directus-users'"
+      );
     });
 
     it('should generate parent folder import statements', () => {
@@ -117,9 +154,16 @@ describe('ImportUtils', () => {
         'export const DrxDirectusUserSchema = z.object({ posts: DrxPostSchema.nullable().optional() });'
       );
 
-      const importStatements = ImportUtils.generateImportStatements(result, mockResults, [], true);
+      const importStatements = ImportUtils.generateImportStatements(
+        result,
+        mockResults,
+        [],
+        true
+      );
 
-      expect(importStatements).toContain("import { DrxPostSchema, type DrsPost } from '../posts'");
+      expect(importStatements).toContain(
+        "import { DrxPostSchema, type DrsPost } from '../posts'"
+      );
     });
 
     it('should handle circular dependencies', () => {
@@ -129,9 +173,16 @@ describe('ImportUtils', () => {
         'export const DrxUserSchema = z.object({ posts: DrxPostSchema.nullable().optional() });'
       );
 
-      const importStatements = ImportUtils.generateImportStatements(result, mockResults, circularDeps, false);
+      const importStatements = ImportUtils.generateImportStatements(
+        result,
+        mockResults,
+        circularDeps,
+        false
+      );
 
-      expect(importStatements).toContain("import { DrxPostSchema, type DrsPost } from './posts'");
+      expect(importStatements).toContain(
+        "import { DrxPostSchema, type DrsPost } from './posts'"
+      );
     });
 
     it('should avoid duplicate imports', () => {
@@ -140,9 +191,15 @@ describe('ImportUtils', () => {
         'export const DrxPostSchema = z.object({ author: DrxUserSchema.nullable().optional(), creator: DrxUserSchema.nullable().optional() });'
       );
 
-      const importStatements = ImportUtils.generateImportStatements(result, mockResults, [], false);
+      const importStatements = ImportUtils.generateImportStatements(
+        result,
+        mockResults,
+        [],
+        false
+      );
 
-      const userImportCount = (importStatements.match(/DrxUserSchema/g) || []).length;
+      const userImportCount = (importStatements.match(/DrxUserSchema/g) || [])
+        .length;
       expect(userImportCount).toBe(1);
     });
   });
@@ -154,8 +211,13 @@ describe('ImportUtils', () => {
         'export const DrxUserSchema = z.object({ avatar: DrxFileSchema.nullable().optional() });'
       );
 
-      const importStatement = ImportUtils.generateFileSchemaImport(result, false);
-      expect(importStatement).toContain("import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from './file-schemas'");
+      const importStatement = ImportUtils.generateFileSchemaImport(
+        result,
+        false
+      );
+      expect(importStatement).toContain(
+        "import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from './file-schemas'"
+      );
     });
 
     it('should generate file schema import for system collections', () => {
@@ -164,8 +226,13 @@ describe('ImportUtils', () => {
         'export const DrxDirectusUserSchema = z.object({ avatar: DrxFileSchema.nullable().optional() });'
       );
 
-      const importStatement = ImportUtils.generateFileSchemaImport(result, true);
-      expect(importStatement).toContain("import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from '../file-schemas'");
+      const importStatement = ImportUtils.generateFileSchemaImport(
+        result,
+        true
+      );
+      expect(importStatement).toContain(
+        "import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from '../file-schemas'"
+      );
     });
 
     it('should not generate import when not needed', () => {
@@ -174,14 +241,20 @@ describe('ImportUtils', () => {
         'export const DrxUserSchema = z.object({ name: z.string() });'
       );
 
-      const importStatement = ImportUtils.generateFileSchemaImport(result, false);
+      const importStatement = ImportUtils.generateFileSchemaImport(
+        result,
+        false
+      );
       expect(importStatement).toBe('');
     });
   });
 
   describe('generateZodImport', () => {
     it('should generate zod import when schema exists', () => {
-      const result = createMockSchema('users', 'export const DrxUserSchema = z.object({ name: z.string() });');
+      const result = createMockSchema(
+        'users',
+        'export const DrxUserSchema = z.object({ name: z.string() });'
+      );
       const importStatement = ImportUtils.generateZodImport(result);
       expect(importStatement).toContain("import { z } from 'zod'");
     });

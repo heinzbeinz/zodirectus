@@ -5,7 +5,9 @@ describe('StringUtils', () => {
     it('should convert snake_case to PascalCase', () => {
       expect(StringUtils.toPascalCase('user_created')).toBe('UserCreated');
       expect(StringUtils.toPascalCase('directus_users')).toBe('DirectusUsers');
-      expect(StringUtils.toPascalCase('question_answers')).toBe('QuestionAnswers');
+      expect(StringUtils.toPascalCase('question_answers')).toBe(
+        'QuestionAnswers'
+      );
     });
 
     it('should handle already PascalCase strings', () => {
@@ -27,7 +29,9 @@ describe('StringUtils', () => {
     it('should convert PascalCase to kebab-case', () => {
       expect(StringUtils.toKebabCase('UserCreated')).toBe('user-created');
       expect(StringUtils.toKebabCase('DirectusUsers')).toBe('directus-users');
-      expect(StringUtils.toKebabCase('QuestionAnswers')).toBe('question-answers');
+      expect(StringUtils.toKebabCase('QuestionAnswers')).toBe(
+        'question-answers'
+      );
     });
 
     it('should handle snake_case input', () => {
@@ -59,7 +63,9 @@ describe('StringUtils', () => {
     });
 
     it('should handle complex compound words', () => {
-      expect(StringUtils.toSingular('DialogueQuestionAnswers')).toBe('DialogueQuestionAnswer');
+      expect(StringUtils.toSingular('DialogueQuestionAnswers')).toBe(
+        'DialogueQuestionAnswer'
+      );
       expect(StringUtils.toSingular('AnswerEnablers')).toBe('AnswerEnabler');
     });
 

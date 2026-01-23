@@ -12,12 +12,17 @@ export class FieldUtils {
     if (field.field.startsWith('divider-')) {
       return true;
     }
-    
+
     // Check if field interface is 'divider'
     if (field.meta?.interface === 'divider') {
       return true;
     }
-    
+
+    // Check if field type is 'divider'
+    if (field.type === 'divider') {
+      return true;
+    }
+
     return false;
   }
 
@@ -29,12 +34,17 @@ export class FieldUtils {
     if (field.field.startsWith('notice-')) {
       return true;
     }
-    
+
     // Check if field interface is 'notice'
     if (field.meta?.interface === 'notice') {
       return true;
     }
-    
+
+    // Check if field type is 'notice'
+    if (field.type === 'notice') {
+      return true;
+    }
+
     return false;
   }
 
@@ -42,7 +52,7 @@ export class FieldUtils {
    * Check if a field is a UI only field which can be skipped
    */
   static isUiOnlyField(field: DirectusField): boolean {
-    return FieldUtils.isDividerField(field) || FieldUtils.isNoticeField(field);
+    return this.isDividerField(field) || this.isNoticeField(field);
   }
 
   /**
@@ -51,12 +61,14 @@ export class FieldUtils {
   static isFileField(field: DirectusField): boolean {
     const special = field.meta?.special || [];
     const interface_ = field.meta?.interface || '';
-    
-    return special.includes('file') || 
-           special.includes('files') ||
-           interface_ === 'file' || 
-           interface_ === 'file-image' ||
-           interface_ === 'files';
+
+    return (
+      special.includes('file') ||
+      special.includes('files') ||
+      interface_ === 'file' ||
+      interface_ === 'file-image' ||
+      interface_ === 'files'
+    );
   }
 
   /**
@@ -64,12 +76,14 @@ export class FieldUtils {
    */
   static isRelationField(field: DirectusField): boolean {
     const special = field.meta?.special || [];
-    
-    return special.includes('m2o') || 
-           special.includes('o2m') || 
-           special.includes('m2m') || 
-           special.includes('m2a') ||
-           field.schema?.foreign_key_table !== undefined;
+
+    return (
+      special.includes('m2o') ||
+      special.includes('o2m') ||
+      special.includes('m2m') ||
+      special.includes('m2a') ||
+      field.schema?.foreign_key_table !== undefined
+    );
   }
 
   /**
@@ -78,10 +92,12 @@ export class FieldUtils {
   static isManyToManyJunctionField(field: DirectusField): boolean {
     const special = field.meta?.special || [];
     const interface_ = field.meta?.interface || '';
-    
-    return special.includes('m2m') || 
-           interface_.includes('m2m') || 
-           interface_.includes('many-to-many');
+
+    return (
+      special.includes('m2m') ||
+      interface_.includes('m2m') ||
+      interface_.includes('many-to-many')
+    );
   }
 
   /**
@@ -113,7 +129,11 @@ export class FieldUtils {
    */
   static isDateTimeField(field: DirectusField): boolean {
     const directusType = field.schema?.data_type || field.type;
-    return directusType === 'date' || directusType === 'datetime' || directusType === 'time';
+    return (
+      directusType === 'date' ||
+      directusType === 'datetime' ||
+      directusType === 'time'
+    );
   }
 
   /**
@@ -146,40 +166,48 @@ export class FieldUtils {
   static isJunctionTable(collection: DirectusCollectionWithFields): boolean {
     // Check if collection name follows junction table patterns
     const collectionName = collection.collection.toLowerCase();
-    
+
     // Common junction table patterns
     if (collectionName.includes('_') && collectionName.split('_').length >= 3) {
       return true;
     }
-    
+
     // Check if it has multiple foreign key fields (indicating it's a junction table)
-    const foreignKeyFields = collection.fields.filter(field => 
-      field.schema?.foreign_key_table !== undefined
+    const foreignKeyFields = collection.fields.filter(
+      field => field.schema?.foreign_key_table !== undefined
     );
-    
+
     return foreignKeyFields.length >= 2;
   }
 
   /**
    * Get fields to omit for create operations
    */
-  static getFieldsToOmitForCreate(fields: DirectusField[], hasIdField: boolean): string[] {
+  static getFieldsToOmitForCreate(
+    fields: DirectusField[],
+    hasIdField: boolean
+  ): string[] {
     const fieldsToOmit: string[] = [];
-    
+
     // Always omit ID field for create operations
     if (hasIdField) {
       fieldsToOmit.push('id');
     }
-    
+
     // Check for system fields that should be omitted
-    const systemFields = ['user_created', 'date_created', 'user_updated', 'date_updated'];
-    
+    const systemFields = [
+      'user_created',
+      'date_created',
+      'user_updated',
+      'date_updated',
+    ];
+
     systemFields.forEach(systemField => {
       if (fields.some(field => field.field === systemField)) {
         fieldsToOmit.push(systemField);
       }
     });
-    
+
     return fieldsToOmit;
   }
 }

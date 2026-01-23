@@ -5,9 +5,9 @@ describe('RelationshipUtils', () => {
   let relationshipUtils: RelationshipUtils;
 
   const createMockField = (
-    field: string, 
-    type: string, 
-    special?: string[], 
+    field: string,
+    type: string,
+    special?: string[],
     options?: any,
     foreignKeyTable?: string
   ): DirectusField => ({
@@ -103,7 +103,13 @@ describe('RelationshipUtils', () => {
       });
 
       it('should return null for M2O without foreign key table', () => {
-        const field = createMockField('user_id', 'uuid', ['m2o'], {}, undefined);
+        const field = createMockField(
+          'user_id',
+          'uuid',
+          ['m2o'],
+          {},
+          undefined
+        );
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBeNull();
       });
@@ -115,42 +121,54 @@ describe('RelationshipUtils', () => {
       });
 
       it('should return junction table from options', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { junction_table: 'user_roles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          junction_table: 'user_roles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('user_roles');
       });
 
       it('should return related collection from options', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { related_collection: 'roles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          related_collection: 'roles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('roles');
       });
 
       it('should return junction collection from options', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { junction_collection: 'user_roles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          junction_collection: 'user_roles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('user_roles');
       });
 
       it('should return collection from options', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { collection: 'roles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          collection: 'roles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('roles');
       });
 
       it('should return many_collection from options', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { many_collection: 'roles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          many_collection: 'roles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('roles');
       });
 
       it('should return one_collection from options', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { one_collection: 'roles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          one_collection: 'roles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('roles');
@@ -181,7 +199,9 @@ describe('RelationshipUtils', () => {
       });
 
       it('should infer from junction table name in options', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { junction_table: 'user_roles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          junction_table: 'user_roles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('user_roles');
@@ -192,7 +212,8 @@ describe('RelationshipUtils', () => {
         const utilsWithoutRelationships = new RelationshipUtils([]);
         const field = createMockField('user_id', 'uuid', ['m2m'], {});
         field.meta!.collection = 'some_other_junction';
-        const result = utilsWithoutRelationships.getRelatedCollectionName(field);
+        const result =
+          utilsWithoutRelationships.getRelatedCollectionName(field);
         // M2M fields without relationships and options should return null
         expect(result).toBeNull();
       });
@@ -207,7 +228,9 @@ describe('RelationshipUtils', () => {
 
     describe('O2M relations', () => {
       it('should return related collection from options', () => {
-        const field = createMockField('activity_logs', 'json', ['o2m'], { related_collection: 'audit_activity_logs' });
+        const field = createMockField('activity_logs', 'json', ['o2m'], {
+          related_collection: 'audit_activity_logs',
+        });
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('audit_activity_logs');
       });
@@ -265,7 +288,9 @@ describe('RelationshipUtils', () => {
       });
 
       it('should handle junction table name without underscores', () => {
-        const field = createMockField('roles', 'json', ['m2m'], { junction_table: 'userroles' });
+        const field = createMockField('roles', 'json', ['m2m'], {
+          junction_table: 'userroles',
+        });
         field.meta!.collection = 'users';
         const result = relationshipUtils.getRelatedCollectionName(field);
         expect(result).toBe('userroles');
@@ -276,7 +301,8 @@ describe('RelationshipUtils', () => {
         const utilsWithoutRelationships = new RelationshipUtils([]);
         const field = createMockField('user_id', 'uuid', ['m2m'], {}); // M2M field
         field.meta!.collection = 'junction_table';
-        const result = utilsWithoutRelationships.getRelatedCollectionName(field);
+        const result =
+          utilsWithoutRelationships.getRelatedCollectionName(field);
         // The field name inference logic appears to be unreachable in current implementation
         expect(result).toBeNull();
       });

@@ -2,7 +2,11 @@ import { DependencyUtils } from './dependency-utils';
 import { GeneratedSchema } from '../types';
 
 describe('DependencyUtils', () => {
-  const createMockSchema = (collectionName: string, schema?: string, type?: string): GeneratedSchema => ({
+  const createMockSchema = (
+    collectionName: string,
+    schema?: string,
+    type?: string
+  ): GeneratedSchema => ({
     collectionName,
     schema,
     type,
@@ -11,9 +15,18 @@ describe('DependencyUtils', () => {
   describe('buildDependencyGraph', () => {
     it('should build dependency graph correctly', () => {
       const results: GeneratedSchema[] = [
-        createMockSchema('users', 'export const DrxUserSchema = z.object({ posts: DrxPostSchema.nullable().optional() });'),
-        createMockSchema('posts', 'export const DrxPostSchema = z.object({ author: DrxUserSchema.nullable().optional() });'),
-        createMockSchema('comments', 'export const DrxCommentSchema = z.object({ post: DrxPostSchema.nullable().optional() });'),
+        createMockSchema(
+          'users',
+          'export const DrxUserSchema = z.object({ posts: DrxPostSchema.nullable().optional() });'
+        ),
+        createMockSchema(
+          'posts',
+          'export const DrxPostSchema = z.object({ author: DrxUserSchema.nullable().optional() });'
+        ),
+        createMockSchema(
+          'comments',
+          'export const DrxCommentSchema = z.object({ post: DrxPostSchema.nullable().optional() });'
+        ),
       ];
 
       const graph = DependencyUtils.buildDependencyGraph(results);
@@ -25,7 +38,10 @@ describe('DependencyUtils', () => {
 
     it('should handle schemas with no dependencies', () => {
       const results: GeneratedSchema[] = [
-        createMockSchema('users', 'export const DrxUserSchema = z.object({ name: z.string() });'),
+        createMockSchema(
+          'users',
+          'export const DrxUserSchema = z.object({ name: z.string() });'
+        ),
       ];
 
       const graph = DependencyUtils.buildDependencyGraph(results);
@@ -91,16 +107,26 @@ describe('DependencyUtils', () => {
         ['Comment', 'Post', 'Comment'],
       ];
 
-      expect(DependencyUtils.isCircularDependency('User', 'Post', circularDeps)).toBe(true);
-      expect(DependencyUtils.isCircularDependency('Post', 'User', circularDeps)).toBe(true);
-      expect(DependencyUtils.isCircularDependency('Comment', 'Post', circularDeps)).toBe(true);
-      expect(DependencyUtils.isCircularDependency('User', 'Comment', circularDeps)).toBe(false);
+      expect(
+        DependencyUtils.isCircularDependency('User', 'Post', circularDeps)
+      ).toBe(true);
+      expect(
+        DependencyUtils.isCircularDependency('Post', 'User', circularDeps)
+      ).toBe(true);
+      expect(
+        DependencyUtils.isCircularDependency('Comment', 'Post', circularDeps)
+      ).toBe(true);
+      expect(
+        DependencyUtils.isCircularDependency('User', 'Comment', circularDeps)
+      ).toBe(false);
     });
 
     it('should handle empty circular dependencies', () => {
       const circularDeps: string[][] = [];
 
-      expect(DependencyUtils.isCircularDependency('User', 'Post', circularDeps)).toBe(false);
+      expect(
+        DependencyUtils.isCircularDependency('User', 'Post', circularDeps)
+      ).toBe(false);
     });
   });
 });

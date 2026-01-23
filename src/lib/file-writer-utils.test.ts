@@ -13,29 +13,52 @@ describe('FileWriterUtils', () => {
   });
 
   describe('generateFileContent', () => {
-    const createMockSchema = (collectionName: string, schema?: string, type?: string): GeneratedSchema => ({
+    const createMockSchema = (
+      collectionName: string,
+      schema?: string,
+      type?: string
+    ): GeneratedSchema => ({
       collectionName,
       schema,
       type,
     });
 
     it('should generate file content with schema only', () => {
-      const result = createMockSchema('users', 'export const DrxUserSchema = z.object({ name: z.string() });');
+      const result = createMockSchema(
+        'users',
+        'export const DrxUserSchema = z.object({ name: z.string() });'
+      );
       const results = [result];
       const circularDeps: string[][] = [];
 
-      const content = FileWriterUtils.generateFileContent(result, results, circularDeps, false);
+      const content = FileWriterUtils.generateFileContent(
+        result,
+        results,
+        circularDeps,
+        false
+      );
 
       expect(content).toContain("import { z } from 'zod'");
-      expect(content).toContain('export const DrxUserSchema = z.object({ name: z.string() });');
+      expect(content).toContain(
+        'export const DrxUserSchema = z.object({ name: z.string() });'
+      );
     });
 
     it('should generate file content with type only', () => {
-      const result = createMockSchema('users', undefined, 'export interface DrsUser { name: string; }');
+      const result = createMockSchema(
+        'users',
+        undefined,
+        'export interface DrsUser { name: string; }'
+      );
       const results = [result];
       const circularDeps: string[][] = [];
 
-      const content = FileWriterUtils.generateFileContent(result, results, circularDeps, false);
+      const content = FileWriterUtils.generateFileContent(
+        result,
+        results,
+        circularDeps,
+        false
+      );
 
       expect(content).toContain('export interface DrsUser { name: string; }');
     });
@@ -49,10 +72,17 @@ describe('FileWriterUtils', () => {
       const results = [result];
       const circularDeps: string[][] = [];
 
-      const content = FileWriterUtils.generateFileContent(result, results, circularDeps, false);
+      const content = FileWriterUtils.generateFileContent(
+        result,
+        results,
+        circularDeps,
+        false
+      );
 
       expect(content).toContain("import { z } from 'zod'");
-      expect(content).toContain('export const DrxUserSchema = z.object({ name: z.string() });');
+      expect(content).toContain(
+        'export const DrxUserSchema = z.object({ name: z.string() });'
+      );
       expect(content).toContain('export interface DrsUser { name: string; }');
     });
 
@@ -64,9 +94,16 @@ describe('FileWriterUtils', () => {
       const results = [result];
       const circularDeps: string[][] = [];
 
-      const content = FileWriterUtils.generateFileContent(result, results, circularDeps, false);
+      const content = FileWriterUtils.generateFileContent(
+        result,
+        results,
+        circularDeps,
+        false
+      );
 
-      expect(content).toContain("import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from './file-schemas'");
+      expect(content).toContain(
+        "import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from './file-schemas'"
+      );
     });
 
     it('should add file schema imports with parent path for system collections', () => {
@@ -77,9 +114,16 @@ describe('FileWriterUtils', () => {
       const results = [result];
       const circularDeps: string[][] = [];
 
-      const content = FileWriterUtils.generateFileContent(result, results, circularDeps, true);
+      const content = FileWriterUtils.generateFileContent(
+        result,
+        results,
+        circularDeps,
+        true
+      );
 
-      expect(content).toContain("import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from '../file-schemas'");
+      expect(content).toContain(
+        "import { DrxFileSchema, DrxImageFileSchema, type DrsFile, type DrsImageFile } from '../file-schemas'"
+      );
     });
   });
 
@@ -149,7 +193,9 @@ describe('FileWriterUtils', () => {
       await FileWriterUtils.writeFiles(results, outputDir);
 
       expect(mockedFs.existsSync).toHaveBeenCalledWith(outputDir);
-      expect(mockedFs.mkdirSync).toHaveBeenCalledWith(outputDir, { recursive: true });
+      expect(mockedFs.mkdirSync).toHaveBeenCalledWith(outputDir, {
+        recursive: true,
+      });
     });
 
     it('should create system subdirectory', async () => {
@@ -161,8 +207,13 @@ describe('FileWriterUtils', () => {
 
       await FileWriterUtils.writeFiles(results, outputDir);
 
-      expect(mockedFs.mkdirSync).toHaveBeenCalledWith(outputDir, { recursive: true });
-      expect(mockedFs.mkdirSync).toHaveBeenCalledWith(path.join(outputDir, 'system'), { recursive: true });
+      expect(mockedFs.mkdirSync).toHaveBeenCalledWith(outputDir, {
+        recursive: true,
+      });
+      expect(mockedFs.mkdirSync).toHaveBeenCalledWith(
+        path.join(outputDir, 'system'),
+        { recursive: true }
+      );
     });
 
     it('should write system collections to system folder', async () => {
@@ -212,11 +263,15 @@ describe('FileWriterUtils', () => {
           schema: { data_type: 'uuid' },
         },
       ];
-      mockClient.getCollectionWithFields.mockResolvedValue({ fields: fileFields });
+      mockClient.getCollectionWithFields.mockResolvedValue({
+        fields: fileFields,
+      });
 
       await FileWriterUtils.writeFileSchemas('./test-output', mockClient);
 
-      expect(mockClient.getCollectionWithFields).toHaveBeenCalledWith('directus_files');
+      expect(mockClient.getCollectionWithFields).toHaveBeenCalledWith(
+        'directus_files'
+      );
       expect(mockedFs.writeFileSync).toHaveBeenCalledWith(
         path.join('./test-output', 'file-schemas.ts'),
         expect.any(String)
@@ -224,11 +279,15 @@ describe('FileWriterUtils', () => {
     });
 
     it('should write fallback file schemas when client fails', async () => {
-      mockClient.getCollectionWithFields.mockRejectedValue(new Error('Access denied'));
+      mockClient.getCollectionWithFields.mockRejectedValue(
+        new Error('Access denied')
+      );
 
       await FileWriterUtils.writeFileSchemas('./test-output', mockClient);
 
-      expect(mockClient.getCollectionWithFields).toHaveBeenCalledWith('directus_files');
+      expect(mockClient.getCollectionWithFields).toHaveBeenCalledWith(
+        'directus_files'
+      );
       expect(mockedFs.writeFileSync).toHaveBeenCalledWith(
         path.join('./test-output', 'file-schemas.ts'),
         expect.any(String)

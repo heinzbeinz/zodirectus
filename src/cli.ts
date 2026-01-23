@@ -7,6 +7,7 @@ import * as path from 'path';
 interface CLIOptions {
   url: string;
   token?: string;
+  additionalHeaders?: Record<string, string>;
   email?: string;
   password?: string;
   collections?: string[];
@@ -32,7 +33,7 @@ function parseArgs(): CLIOptions {
 
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
-    
+
     switch (arg) {
       case '--url':
       case '-u':
@@ -41,6 +42,22 @@ function parseArgs(): CLIOptions {
       case '--token':
       case '-t':
         options.token = args[++i];
+        break;
+      case '--additional-headers':
+        options.additionalHeaders = JSON.parse(args[++i]);
+        break;
+      case '--header':
+      case '-H':
+        if (!options.additionalHeaders) {
+          options.additionalHeaders = {};
+        }
+        if (i + 2 >= args.length) {
+          console.error('Error: Missing header key or value for --header option.');
+          process.exit(1);
+        }
+        const headerKey = args[++i];
+        const headerValue = args[++i];
+        options.additionalHeaders[headerKey] = headerValue;
         break;
       case '--email':
       case '-e':
@@ -103,23 +120,26 @@ Zodirectus - Generate Zod schemas and TypeScript types from Directus collections
 Usage: zodirectus [options]
 
 Options:
-  -u, --url <url>              Directus instance URL (required)
-  -t, --token <token>          Authentication token
-  -e, --email <email>          Email for authentication
-  -p, --password <password>    Password for authentication
-  -c, --collections <list>     Comma-separated list of collections to generate
-  -o, --output <dir>           Output directory (default: ./generated)
-  --schemas                    Generate Zod schemas (default: true)
-  --no-schemas                 Skip Zod schema generation
-  --types                      Generate TypeScript types (default: true)
-  --no-types                   Skip TypeScript type generation
-  --system                     Include system collections
-  -h, --help                   Show this help message
-  -v, --version                Show version information
+  -u, --url <url>                  Directus instance URL (required)
+  -t, --token <token>              Authentication token
+      --additional-headers <json>  Additional headers for authentication
+  -H, --header <key> <value>       Additional header for authentication
+  -e, --email <email>              Email for authentication
+  -p, --password <password>        Password for authentication
+  -c, --collections <list>         Comma-separated list of collections to generate
+  -o, --output <dir>               Output directory (default: ./generated)
+  --schemas                        Generate Zod schemas (default: true)
+  --no-schemas                     Skip Zod schema generation
+  --types                          Generate TypeScript types (default: true)
+  --no-types                       Skip TypeScript type generation
+  --system                         Include system collections
+  -h, --help                       Show this help message
+  -v, --version                    Show version information
 
 Examples:
   zodirectus --url https://api.example.com --token your-token
   zodirectus --url https://api.example.com --email user@example.com --password pass123
+  zodirectus --url https://api.example.com --email user@example.com --password pass123 --additional-headers '{"Authorization": "Bearer your-token"}'
   zodirectus --url https://api.example.com --collections users,posts --output ./types
 `);
 }
@@ -128,7 +148,9 @@ Examples:
  * Display version information
  */
 function showVersion(): void {
-  const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8'));
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(__dirname, '../package.json'), 'utf8')
+  );
   console.log(`zodirectus v${packageJson.version}`);
 }
 
@@ -155,7 +177,9 @@ async function main(): Promise<void> {
   }
 
   if (!options.token && (!options.email || !options.password)) {
-    console.error('Error: Authentication is required. Provide either --token or --email/--password.');
+    console.error(
+      'Error: Authentication is required. Provide either --token or --email/--password.'
+    );
     console.error('Use --help for more information.');
     process.exit(1);
   }
@@ -175,11 +199,13 @@ async function main(): Promise<void> {
 
     console.log('🚀 Starting Zodirectus generation...');
     console.log(`📡 Connecting to: ${config.directusUrl}`);
-    
+
     const zodirectus = new Zodirectus(config);
     const results = await zodirectus.generate();
 
-    console.log(`✅ Successfully generated schemas and types for ${results.length} collections:`);
+    console.log(
+      `✅ Successfully generated schemas and types for ${results.length} collections:`
+    );
     results.forEach(result => {
       console.log(`   - ${result.collectionName}`);
     });
@@ -187,9 +213,11 @@ async function main(): Promise<void> {
     console.log(`📁 Files written to: ${config.outputDir}`);
     console.log(`   - Individual .ts files for each collection`);
     console.log(`   - Each file contains schemas and types`);
-
   } catch (error) {
-    console.error('❌ Error:', error instanceof Error ? error.message : 'Unknown error');
+    console.error(
+      '❌ Error:',
+      error instanceof Error ? error.message : 'Unknown error'
+    );
     process.exit(1);
   }
 }

@@ -16,7 +16,7 @@ async function generate() {
   console.log('Results:', results.length, 'collections processed');
 }
 
-generate().catch((err) => {
+generate().catch(err => {
   console.error('Failed to generate types:', err);
   process.exit(1);
 });

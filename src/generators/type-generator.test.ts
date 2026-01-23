@@ -278,10 +278,13 @@ describe('TypeGenerator', () => {
       const result = generator.generateType(collection);
 
       expect(result).toContain('export interface DrsUser {');
-      expect(result).toContain('export type DrsUserCreate = Omit<DrsUser, "id">');
-      expect(result).toContain('export type DrsUserUpdate = Partial<DrsUser> & Required<Pick<DrsUser, "id">>');
+      expect(result).toContain(
+        'export type DrsUserCreate = Omit<DrsUser, "id">'
+      );
+      expect(result).toContain(
+        'export type DrsUserUpdate = Partial<DrsUser> & Required<Pick<DrsUser, "id">>'
+      );
       expect(result).toContain('export type DrsUserGet = DrsUser');
     });
   });
-
 });

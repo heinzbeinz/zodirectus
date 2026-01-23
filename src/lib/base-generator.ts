@@ -19,7 +19,9 @@ export abstract class BaseGenerator {
     if (this.client) {
       try {
         const relationships = await this.client.getRelationships();
-        console.log(`Loaded ${relationships.length} relationships from Directus`);
+        console.log(
+          `Loaded ${relationships.length} relationships from Directus`
+        );
       } catch (error) {
         console.warn('Could not load relationships:', error);
       }

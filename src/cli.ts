@@ -187,6 +187,7 @@ async function main(): Promise<void> {
   try {
     const config: ZodirectusConfig = {
       directusUrl: options.url,
+      additionalHeaders: options.additionalHeaders,
       token: options.token,
       email: options.email,
       password: options.password,
